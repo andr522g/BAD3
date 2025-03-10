@@ -10,6 +10,7 @@ public class Discount
     public int GuestCount { get; set; }
     public double Percentage { get; set; }
 
+    // One to many relationship with service 
     [ForeignKey("Service")]
     public int ServiceId { get; set; }
     public Service Service { get; set; }

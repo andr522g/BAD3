@@ -18,7 +18,7 @@ public class Service
     public Provider Provider { get; set; }
 
     // Many-to-many relationship with SharedExperience
-    public ICollection<SharedExperienceService> ServiceSharedExperiences { get; set; }
+    public ICollection<SharedExperienceService> SharedExperienceService { get; set; }
 
     // One-to-many relationship with Discount
     public ICollection<Discount> Discount { get; set; }
