@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SharedExperinces.WebApi.DataAccess;
+using SharedExperinces.WebApi.Models;
 
 namespace SharedExperinces.WebApi.Controllers
 {
@@ -18,7 +19,7 @@ namespace SharedExperinces.WebApi.Controllers
 
 
 		[HttpPost]
-		public async Task<IActionResult> AddExperience([FromBody] Experience experience)
+		public async Task<IActionResult> AddExperience([FromBody] SharedExperience experience)
 		{
 			if (!ModelState.IsValid)
 			{
