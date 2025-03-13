@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SharedExperinces.WebApi.Models;
 
-
 namespace SharedExperinces.WebApi.Configurations
 {
     public class GuestConfiguration : IEntityTypeConfiguration<Guest>
@@ -16,10 +15,7 @@ namespace SharedExperinces.WebApi.Configurations
                    .HasForeignKey(r => r.GuestId);
 
             builder.HasMany(g => g.SharedExperiences)
-                   .WithMany(se => se.Guests)
-
-
+                   .WithMany(se => se.Guests);
         }
-
     }
 }
