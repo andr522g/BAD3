@@ -38,6 +38,51 @@ namespace SharedExperinces.WebApi.Controllers
 			return Ok();
 		}
 
+
+		[HttpPut("{id}")]
+		public async Task<IActionResult> UpdateService(int id, [FromBody] Service service)
+		{
+			if (!ModelState.IsValid) // This checks the custom validation on Price
+			{
+				return BadRequest(ModelState); // If validation fails, return BadRequest
+			}
+
+			var existingService = await _context.Services.FindAsync(id);
+			if (existingService == null)
+			{
+				return NotFound(); // If the service with the given id is not found
+			}
+
 		
+			existingService.Price = service.Price; // This will trigger the Price validation
+			
+
+			_context.Services.Update(existingService);
+			await _context.SaveChangesAsync();
+
+			return Ok(existingService); // Return the updated service
+		}
+
+
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> DeleteService(int id)
+		{
+			var service = await _context.Services.FindAsync(id);
+
+			if (service == null)
+			{
+				return NotFound();
+			}
+
+			_context.Services.Remove(service);
+
+			await _context.SaveChangesAsync();
+
+			return NoContent();
+		}
+
+
+
+
 	}
 }
