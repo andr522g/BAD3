@@ -10,6 +10,7 @@ namespace SharedExperinces.WebApi.Configurations
 		{
 
 			builder.HasKey(s => s.ServiceId);
+
 			builder
 		   .HasMany(s => s.Registrations)
 		   .WithOne(r => r.Service)
