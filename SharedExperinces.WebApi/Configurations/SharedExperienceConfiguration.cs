@@ -9,6 +9,8 @@ namespace SharedExperinces.WebApi.Configurations
 		public void Configure(EntityTypeBuilder<SharedExperience> builder)
 		{
 
+			builder.HasKey(se => se.SharedExperienceId);
+
 			builder
 		   .HasMany(se => se.Services)
 		   .WithMany(s => s.SharedExperiences) 
