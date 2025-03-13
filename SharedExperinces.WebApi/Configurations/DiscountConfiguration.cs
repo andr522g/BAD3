@@ -6,10 +6,12 @@ public class DiscountConfiguration : IEntityTypeConfiguration<Discount>
 {
     public void Configure(EntityTypeBuilder<Discount> builder)
     {
-        builder.HasKey(d => new { d.ServiceId, d.GuestCount });  // Composite Key
+        // Composite Key
+        builder.HasKey(d => new { d.ServiceId, d.GuestCount }); 
 
         builder.HasOne(d => d.Service)
                .WithMany(s => s.Discounts)
-               .HasForeignKey(d => d.ServiceId);
+               .HasForeignKey(d => d.ServiceId);      
+
     }
 }

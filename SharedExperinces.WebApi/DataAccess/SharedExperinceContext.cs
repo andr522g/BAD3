@@ -1,39 +1,28 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SharedExperinces.WebApi.Models;
+using System.Reflection;
 
 namespace SharedExperinces.WebApi.DataAccess
 {
 	public class SharedExperinceContext : DbContext
 	{
-        public SharedExperinceContext(DbContextOptions<SharedExperinceContext> options) : base(options)
-        {
+        public SharedExperinceContext(DbContextOptions<SharedExperinceContext> options) 
+			: base(options) { }
 
-        }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Guest> Guests { get; set; }
         public DbSet<Provider> Providers { get; set; }
         public DbSet<Registration> Registrations { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<SharedExperience> SharedExperiences { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-			modelBuilder.Entity<Guest>() // Guest Primary Key
-				.HasKey(g => g.GuestId);
-
-			modelBuilder.Entity<Guest>()
-				.HasMany(g => g.Registrations)
-				.WithOne(r => r.Guest);
-
-			modelBuilder.Entity<Registration>()
-				.HasKey(r => r.RegistrationId);
-
-			modelBuilder.Entity<Registration>()
-				.HasOne(r => r.Guest)
-				.WithMany(g => g.Registrations)
-				.HasForeignKey(r => r.GuestId);
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             base.OnModelCreating(modelBuilder);
         }
+
         public static void Seed(SharedExperinceContext context)
 		{
 			context.Database.EnsureCreated();
