@@ -8,8 +8,7 @@ namespace SharedExperinces.WebApi.Models
         public string Name { get; set; }
         public int Age { get; set; }
         public string Number { get; set; }
-
-        public ICollection<SharedExperienceGuest> SharedExperienceGuest { get; set; }
-        public ICollection<Registration> Registration { get; set; }
+        public ICollection<Registration> Registrations { get; set; }
+        public ICollection<SharedExperience> SharedExperiences { get; set; }
     }
 }

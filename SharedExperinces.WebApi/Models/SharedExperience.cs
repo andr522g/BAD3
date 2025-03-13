@@ -7,8 +7,6 @@ namespace SharedExperinces.WebApi.Models
         public int SharedExperienceId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-
-        public ICollection<SharedExperienceService> SharedExperiencesService { get; set; }
-        public ICollection<SharedExperienceGuest> SharedExperienceGuest { get; set; }
+        public ICollection<Service> Services { get; set; }
     }
 }

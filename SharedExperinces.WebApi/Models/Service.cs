@@ -13,9 +13,8 @@ namespace SharedExperinces.WebApi.Models
 
         public string CVR { get; set; }
         public Provider Provider { get; set; }
-
-        public ICollection<SharedExperienceService> SharedExperienceService { get; set; }
-        public ICollection<Discount> Discount { get; set; }
-        public ICollection<Registration> Registration { get; set; }
+        public ICollection<Discount> Discounts { get; set; }
+        public ICollection<Registration> Registrations { get; set; }
+        public ICollection<SharedExperience> SharedExperiences { get; set; }
     }
 }

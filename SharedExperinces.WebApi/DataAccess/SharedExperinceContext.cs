@@ -15,11 +15,26 @@ namespace SharedExperinces.WebApi.DataAccess
         public DbSet<Registration> Registrations { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<SharedExperience> SharedExperiences { get; set; }
-        public DbSet<SharedExperienceGuest> SharedExperienceGuest { get; set; }
-        public DbSet<SharedExperienceService> SharedExperienceService { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+			modelBuilder.Entity<Guest>() // Guest Primary Key
+				.HasKey(g => g.GuestId);
 
+			modelBuilder.Entity<Guest>()
+				.HasMany(g => g.Registrations)
+				.WithOne(r => r.Guest);
 
-		public static void Seed(SharedExperinceContext context)
+			modelBuilder.Entity<Registration>()
+				.HasKey(r => r.RegistrationId);
+
+			modelBuilder.Entity<Registration>()
+				.HasOne(r => r.Guest)
+				.WithMany(g => g.Registrations)
+				.HasForeignKey(r => r.GuestId);
+
+            base.OnModelCreating(modelBuilder);
+        }
+        public static void Seed(SharedExperinceContext context)
 		{
 			context.Database.EnsureCreated();
 
