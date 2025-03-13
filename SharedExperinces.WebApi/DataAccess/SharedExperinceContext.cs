@@ -4,15 +4,20 @@ using SharedExperinces.WebApi.Models;
 namespace SharedExperinces.WebApi.DataAccess
 {
 	public class SharedExperinceContext : DbContext
-	{
-		public DbSet<Provider> Providers { get; set; }
+	{		
+		public DbSet<Discount> Discounts { get; set; }
+        public DbSet<Guest> Guests { get; set; }
+        public DbSet<Provider> Providers { get; set; }
+        public DbSet<Registration> Registrations { get; set; }
+        public DbSet<Service> Services { get; set; }
+        public DbSet<SharedExperience> SharedExperiences { get; set; }
+        public DbSet<SharedExperienceGuest> SharedExperienceGuest { get; set; }
+        public DbSet<SharedExperienceService> SharedExperienceService { get; set; }
 
-
-		public SharedExperinceContext(DbContextOptions<SharedExperinceContext> options) : base(options)
+        public SharedExperinceContext(DbContextOptions<SharedExperinceContext> options) : base(options)
 		{
 
 		}
-
 
 		public static void Seed(SharedExperinceContext context)
 		{
@@ -34,8 +39,5 @@ namespace SharedExperinces.WebApi.DataAccess
 			});
 			context.SaveChanges();
 		}
-
-
 	}
-
 }

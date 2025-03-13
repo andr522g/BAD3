@@ -40,7 +40,7 @@ namespace SharedExperinces.WebApi.Controllers
 				return BadRequest("Price must be a non-negative value.");
 			}
 
-			var experience = await _context.Experiences.FindAsync(id);
+			var experience = await _context.SharedExperience.FindAsync(id);
 			if (experience == null)
 			{
 				return NotFound();
