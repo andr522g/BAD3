@@ -12,7 +12,8 @@ namespace SharedExperinces.WebApi.Configurations
 
             builder.HasMany(p => p.Services)
                    .WithOne(s => s.Provider)
-                   .HasForeignKey(s => s.CVR);
+                   .HasForeignKey(s => s.CVR)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

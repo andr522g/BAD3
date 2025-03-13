@@ -8,16 +8,13 @@ namespace SharedExperinces.WebApi.Configurations
 	{
 		public void Configure(EntityTypeBuilder<SharedExperience> builder)
 		{
-
 			builder.HasKey(se => se.SharedExperienceId);
 
-			builder
-		   .HasMany(se => se.Services)
-		   .WithMany(s => s.SharedExperiences) 
-		   .UsingEntity<Dictionary<string, object>>( 
-			   "SharedExperienceService",  
-			   j => j.HasOne<Service>().WithMany().HasForeignKey("ServiceId"),
-			   j => j.HasOne<SharedExperience>().WithMany().HasForeignKey("SharedExperienceId")); 
+			builder.HasMany(se => se.Services)
+				   .WithMany(s => s.SharedExperiences);
+
+			builder.HasMany(se => se.Guests)
+				   .WithMany(g => g.SharedExperiences);
 		}
 	}
 }

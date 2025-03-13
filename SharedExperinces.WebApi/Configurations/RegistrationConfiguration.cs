@@ -10,6 +10,14 @@ namespace SharedExperinces.WebApi.Configurations
         public void Configure(EntityTypeBuilder<Registration> builder)
         {
             builder.HasKey(r => r.RegistrationId);
+
+            builder.HasOne(r => r.Service)
+                   .WithMany(s => s.Registrations)
+                   .HasForeignKey(r => r.ServiceId);
+
+            builder.HasOne(r => r.Guest)
+                   .WithMany(g => g.Registrations)
+                   .HasForeignKey(r => r.GuestId);
         }
     }
 }
