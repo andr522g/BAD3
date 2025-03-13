@@ -8,5 +8,6 @@ namespace SharedExperinces.WebApi.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public ICollection<Service> Services { get; set; }
+        public ICollection<Guest> Guests { get; set; }
     }
 }
