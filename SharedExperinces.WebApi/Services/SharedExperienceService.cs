@@ -3,11 +3,11 @@ using SharedExperinces.WebApi.Models;
 
 namespace SharedExperinces.WebApi.Services
 {
-	public class ExperienceService
+	public class SharedExperienceService
 	{
 		private readonly SharedExperinceContext _context;
 
-		public ExperienceService(SharedExperinceContext context)
+		public SharedExperienceService(SharedExperinceContext context)
 		{
 			_context = context;
 		}

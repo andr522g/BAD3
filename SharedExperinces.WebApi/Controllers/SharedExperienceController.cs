@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SharedExperinces.WebApi.DataAccess;
 using SharedExperinces.WebApi.Models;
+using SharedExperinces.WebApi.Services;
 
 namespace SharedExperinces.WebApi.Controllers
 {
@@ -10,11 +11,11 @@ namespace SharedExperinces.WebApi.Controllers
 	public class SharedExperienceController : ControllerBase
 	{
 
-		private readonly SharedExperinceContext _context;
+		private readonly SharedExperienceService _service;
 
-		public SharedExperienceController(SharedExperinceContext context)
+		public SharedExperienceController(SharedExperienceService service)
 		{
-			_context = context;
+			_service = service;
 		}
 
 
@@ -32,8 +33,9 @@ namespace SharedExperinces.WebApi.Controllers
 				return BadRequest(ModelState); 
 			}
 
-			_context.SharedExperiences.Add(experience);
-			await _context.SaveChangesAsync();
+
+			await _service.createExperince(experience);
+
 			return Ok(experience);
 		}
 
