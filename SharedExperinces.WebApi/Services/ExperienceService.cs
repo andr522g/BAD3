@@ -5,9 +5,7 @@ namespace SharedExperinces.WebApi.Services
 {
 	public class ExperienceService
 	{
-
 		private readonly SharedExperinceContext _context;
-
 
 		public ExperienceService(SharedExperinceContext context)
 		{
