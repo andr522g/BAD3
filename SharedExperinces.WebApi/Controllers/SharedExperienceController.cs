@@ -18,7 +18,6 @@ namespace SharedExperinces.WebApi.Controllers
 			_service = service;
 		}
 
-
 		[HttpPost]
 		public async Task<IActionResult> AddExperience([FromBody] SharedExperience experience)
 		{
@@ -32,9 +31,14 @@ namespace SharedExperinces.WebApi.Controllers
 			return Ok(experience);
 		}
 
+        [HttpGet("ListExperiencesWithDates")]
+		public async Task<IActionResult> GetSharedExperienceDates()
+		{
+			var experiences = await _service.GetAllExperienceDate();
+			if (experiences == null || !experiences.Any()) // Checks if the data exists nad if the list is empty
+				return NotFound("No shared expereinces found");
 
-
-
-
-	}
+			return Ok(experiences);
+		}
+    }
 }
