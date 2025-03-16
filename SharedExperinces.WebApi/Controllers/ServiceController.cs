@@ -4,6 +4,7 @@ using SharedExperinces.WebApi.DataAccess;
 using SharedExperinces.WebApi.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using SharedExperinces.WebApi.Services;
 
 namespace SharedExperinces.WebApi.Controllers
 {
@@ -11,33 +12,26 @@ namespace SharedExperinces.WebApi.Controllers
 	[ApiController]
 	public class ServiceController : ControllerBase
 	{
-		private readonly SharedExperinceContext _context;
+		private readonly ServiceService _service;
 
-		public ServiceController(SharedExperinceContext context)
+		public ServiceController(ServiceService service)
 		{
-			_context = context;
+			_service = service;
 		}
 
 		[HttpPost]
 		public async Task<IActionResult> AddService([FromBody] Service service)
 		{
-			if (service == null)
-				return BadRequest("Service data is required.");
-
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
 
-			// Check if Provider exists
-			var provider = await _context.Providers.FindAsync(service.CVR);
-			if (provider == null)
-				return NotFound($"Provider with CVR {service.CVR} not found.");
+			var errorMessage = await _service.AddNewService(service);
 
-			_context.Services.Add(service);
-			await _context.SaveChangesAsync();
+			if (errorMessage != null)
+				return BadRequest(errorMessage);
 
 			return Ok();
 		}
-
 
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateService(int id, [FromBody] Service service)
@@ -47,42 +41,29 @@ namespace SharedExperinces.WebApi.Controllers
 				return BadRequest(ModelState); // If validation fails, return BadRequest
 			}
 
-			var existingService = await _context.Services.FindAsync(id);
-			if (existingService == null)
+			var existingService = await _service.GetServiceById(id);
+
+            if (existingService == null)
 			{
 				return NotFound(); // If the service with the given id is not found
 			}
-
 		
 			existingService.Price = service.Price; // This will trigger the Price validation
-			
-
-			_context.Services.Update(existingService);
-			await _context.SaveChangesAsync();
 
 			return Ok(existingService); // Return the updated service
 		}
 
-
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteService(int id)
 		{
-			var service = await _context.Services.FindAsync(id);
+			var service = await _service.DeleteServiceById(id);
 
-			if (service == null)
+			if (service == false)
 			{
 				return NotFound();
 			}
 
-			_context.Services.Remove(service);
-
-			await _context.SaveChangesAsync();
-
 			return NoContent();
 		}
-
-
-
-
 	}
 }

@@ -22,22 +22,18 @@ namespace SharedExperinces.WebApi.Controllers
 		[HttpPost]
 		public async Task<IActionResult> AddExperience([FromBody] SharedExperience experience)
 		{
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-			if (experience == null) 
-			{
-				return BadRequest("Experience data is required.");
-			}
-
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState); 
-			}
-
-
-			await _service.createExperince(experience);
+            await _service.createExperince(experience);
 
 			return Ok(experience);
 		}
+
+
+
 
 
 	}

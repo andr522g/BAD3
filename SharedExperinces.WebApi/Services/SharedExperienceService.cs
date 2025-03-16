@@ -12,11 +12,12 @@ namespace SharedExperinces.WebApi.Services
 			_context = context;
 		}
 
-		public async Task createExperince(SharedExperience experience) 
+		public async Task<string?> createExperince(SharedExperience experience) 
 		{
-
-			_context.SharedExperiences.Add(experience);
+            _context.SharedExperiences.Add(experience);
 			await _context.SaveChangesAsync();
-		}
+
+			return null;
+		}		
 	}
 }
