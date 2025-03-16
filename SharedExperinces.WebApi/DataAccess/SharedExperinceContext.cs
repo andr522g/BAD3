@@ -39,22 +39,48 @@ namespace SharedExperinces.WebApi.DataAccess
                 context.SaveChanges();
             }
 
-            if (!context.Services.Any())
+
+			var service1 = new Service { Name = "Night at Noah's Hotel Single Room", Description = "A cozy single room at Noah's Hotel.", Price = 730.50M, ServiceDate = new DateTime(2024, 6, 15), CVR = "11111114" };
+			var service2 = new Service { Name = "Night at Noah's Hotel Double Room", Description = "A spacious double room at Noah's Hotel.", Price = 910.99M, ServiceDate = new DateTime(2024, 6, 15), CVR = "11111114" };
+			var service3 = new Service { Name = "Flight AAR – VIE", Description = "One-way flight from Aarhus (AAR) to Vienna (VIE).", Price = 1000.70M, ServiceDate = new DateTime(2024, 7, 1), CVR = "33333333" };
+			var service4 = new Service { Name = "Vienna Historic Center Walking Tour", Description = "Guided walking tour of Vienna's historic center.", Price = 100.00M, ServiceDate = new DateTime(2024, 7, 2), CVR = "55555555" };
+
+
+			var sharedExperince1 = new SharedExperience { Name = "Trip to Austria", Description = "A group trip exploring Vienna, including flights, hotel stays, and guided tours." };
+
+			var sharedExperience2 = new SharedExperience { Name = "Dinner Downtown", Description = "A fine dining experience at a highly-rated restaurant in the city center." };
+
+
+            sharedExperince1.Services.Add(service1);
+			sharedExperince1.Services.Add(service3);
+			sharedExperince1.Services.Add(service4);
+
+            service1.SharedExperiences.Add(sharedExperince1);
+			service3.SharedExperiences.Add(sharedExperince1);
+			service4.SharedExperiences.Add(sharedExperince1);
+
+			if (!context.Services.Any())
             {
-                context.Services.AddRange(
-                    new Service { ServiceId = 1, Name = "Night at Noah's Hotel Single Room", Description = "A cozy single room at Noah's Hotel.", Price = 730.50M, ServiceDate = new DateTime(2024, 6, 15), CVR = "11111114" },
-                    new Service { ServiceId = 2, Name = "Night at Noah's Hotel Double Room", Description = "A spacious double room at Noah's Hotel.", Price = 910.99M, ServiceDate = new DateTime(2024, 6, 15), CVR = "11111114" },
-                    new Service { ServiceId = 3, Name = "Flight AAR – VIE", Description = "One-way flight from Aarhus (AAR) to Vienna (VIE).", Price = 1000.70M, ServiceDate = new DateTime(2024, 7, 1), CVR = "33333333" },
-                    new Service { ServiceId = 4, Name = "Vienna Historic Center Walking Tour", Description = "Guided walking tour of Vienna's historic center.", Price = 100.00M, ServiceDate = new DateTime(2024, 7, 2), CVR = "55555555" }
-                );
+
+
+				context.Services.AddRange(
+                  service1,
+                  service2,
+				  service3,
+				  service4
+				);
                 context.SaveChanges();
             }
 
-            if (!context.SharedExperiences.Any())
+			
+
+			if (!context.SharedExperiences.Any())
             {
-                context.SharedExperiences.AddRange(
-                    new SharedExperience { SharedExperienceId = 1, Name = "Trip to Austria", Description = "A group trip exploring Vienna, including flights, hotel stays, and guided tours." },
-                    new SharedExperience { SharedExperienceId = 2, Name = "Dinner Downtown", Description = "A fine dining experience at a highly-rated restaurant in the city center." }
+
+
+				context.SharedExperiences.AddRange(
+                    sharedExperince1,
+                    sharedExperience2
                 );
                 context.SaveChanges();
             }
@@ -62,10 +88,10 @@ namespace SharedExperinces.WebApi.DataAccess
             if (!context.Guests.Any())
             {
                 context.Guests.AddRange(
-                    new Guest { GuestId = 1, Name = "Joan Eriksen", Number = "+45 11113333", Age = 27 },
-                    new Guest { GuestId = 2, Name = "Suzanne Mortensen", Number = "+45 22224444", Age = 29 },
-                    new Guest { GuestId = 3, Name = "Patrick Larsen", Number = "+45 33335555", Age = 32 },
-                    new Guest { GuestId = 4, Name = "Anne Christensen", Number = "+45 44446666", Age = 26 }
+                    new Guest {  Name = "Joan Eriksen", Number = "+45 11113333", Age = 27 },
+                    new Guest { Name = "Suzanne Mortensen", Number = "+45 22224444", Age = 29 },
+                    new Guest { Name = "Patrick Larsen", Number = "+45 33335555", Age = 32 },
+                    new Guest { Name = "Anne Christensen", Number = "+45 44446666", Age = 26 }
                 );
                 context.SaveChanges();
             }
@@ -73,10 +99,10 @@ namespace SharedExperinces.WebApi.DataAccess
             if (!context.Registrations.Any())
             {
                 context.Registrations.AddRange(
-                    new Registration { RegistrationId = 1, GuestId = 1, ServiceId = 4 },
-                    new Registration { RegistrationId = 2, GuestId = 2, ServiceId = 4 },
-                    new Registration { RegistrationId = 3, GuestId = 1, ServiceId = 1 },
-                    new Registration { RegistrationId = 4, GuestId = 2, ServiceId = 1 }
+                    new Registration { GuestId = 1, ServiceId = 4 },
+                    new Registration {  GuestId = 2, ServiceId = 4 },
+                    new Registration {  GuestId = 1, ServiceId = 1 },
+                    new Registration {  GuestId = 2, ServiceId = 1 }
                 );
                 context.SaveChanges();
             }

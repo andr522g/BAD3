@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SharedExperinces.WebApi.DataAccess;
+using SharedExperinces.WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +13,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+var connectionString = "Data Source=127.0.0.1,1433;Database=SharedExperincesDB;User Id=sa;Password=Cefemivo+f113;TrustServerCertificate=True";
+  
+
+Console.WriteLine($"Connection string: {connectionString}");
+
 builder.Services.AddDbContext<SharedExperinceContext>(options =>
-	options.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]));
+	options.UseSqlServer(connectionString));
+
+
+builder.Services.AddTransient<ServiceService>();
+builder.Services.AddTransient<SharedExperienceService>();
+builder.Services.AddTransient<ProviderService>();
+
 
 
 

@@ -19,5 +19,13 @@ namespace SharedExperinces.WebApi.Models
         public ICollection<Discount> Discounts { get; set; }
         public ICollection<Registration> Registrations { get; set; }
         public ICollection<SharedExperience> SharedExperiences { get; set; }
-    }
+
+
+        public Service()
+		{
+			Discounts = new List<Discount>();
+			Registrations = new List<Registration>();
+			SharedExperiences = new List<SharedExperience>();
+		}
+	}
 }
