@@ -19,7 +19,7 @@ namespace SharedExperinces.WebApi.Services
             return await _context.Providers.ToListAsync();
         }
 
-        public async Task<Provider?> GetProviderById(int id)
+        public async Task<Provider?> GetProviderById(string id)
         {
             return await _context.Providers.FindAsync(id);
         }

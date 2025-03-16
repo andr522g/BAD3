@@ -2,6 +2,7 @@
 using SharedExperinces.WebApi.Models;
 using SharedExperinces.WebApi.DTO;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 
 namespace SharedExperinces.WebApi.Services
@@ -35,6 +36,22 @@ namespace SharedExperinces.WebApi.Services
                         : (DateTime?)null  // If no services exist, return null
                 })
                 .OrderByDescending(se => se.EarliestServiceDate) // Sort in descending order
+                .ToListAsync();
+        }
+
+        public async Task<List<Guest>?> GetAllGuestsInSharedExperience(int id)
+        {
+            return await _context.SharedExperiences
+                .Where(se => se.SharedExperienceId == id)
+                .SelectMany(se => se.Guests)
+                .ToListAsync();
+        }
+
+        public async Task<List<Service>?> GetAllServicesInSharedExperience(int id)
+        {
+            return await _context.SharedExperiences
+                .Where(se => se.SharedExperienceId == id)
+                .SelectMany(se => se.Services)
                 .ToListAsync();
         }
     }

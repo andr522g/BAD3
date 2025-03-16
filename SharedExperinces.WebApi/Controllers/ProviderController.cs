@@ -24,7 +24,7 @@ namespace SharedExperinces.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetProvider(int id)
+        public async Task<IActionResult> GetProvider(string id)
         {
             var service = await _service.GetProviderById(id);
             if (service == null) return NotFound();

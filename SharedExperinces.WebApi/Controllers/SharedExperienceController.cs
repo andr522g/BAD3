@@ -10,7 +10,6 @@ namespace SharedExperinces.WebApi.Controllers
 	[ApiController]
 	public class SharedExperienceController : ControllerBase
 	{
-
 		private readonly SharedExperienceService _service;
 
 		public SharedExperienceController(SharedExperienceService service)
@@ -39,6 +38,24 @@ namespace SharedExperinces.WebApi.Controllers
 				return NotFound("No shared expereinces found");
 
 			return Ok(experiences);
+		}
+
+		[HttpGet("GetGuestsRegisteredForExperience")]
+		public async Task<IActionResult> GetAllGuestsInSharedExperience(int id)
+		{
+			var guests = await _service.GetAllGuestsInSharedExperience(id);
+			if (guests == null || !guests.Any()) return NotFound("No guests found in shared experience");
+
+			return Ok(guests);
+		}
+
+		[HttpGet("GetServicesInSharedExperience")]
+		public async Task<IActionResult> GetAllServicesInSharedExperience(int id)
+		{
+			var services = await _service.GetAllServicesInSharedExperience(id);
+			if (services == null || !services.Any()) return NotFound("No guests found in shared experience");
+
+			return Ok(services);
 		}
     }
 }
