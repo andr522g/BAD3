@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SharedExperinces.WebApi.DataAccess;
+using SharedExperinces.WebApi.DTO;
 using SharedExperinces.WebApi.Models;
 
 
@@ -15,25 +16,47 @@ namespace SharedExperinces.WebApi.Services
             _context = context;
         }
 
-        public async Task<string?> AddNewService(Service service)
+        public async Task<string?> AddNewService(CreateAndUpdateServiceDto dto)
         {
             // Check if Provider exists
-            var provider = await _context.Providers.FindAsync(service.CVR);
+            var provider = await _context.Providers.FindAsync(dto.CVR);
             if (provider == null)
-                return $"Provider with CVR {service.CVR} not found.";
+                return $"Provider with CVR {dto.CVR} not found.";
 
-            _context.Services.Add(service);
+
+			var service = new Service
+			{
+				Name = dto.Name,
+				Description = dto.Description,
+				Price = dto.Price,
+				ServiceDate = dto.ServiceDate,
+				CVR = dto.CVR,
+				Provider = provider, 
+				Discounts = new List<Discount>(), // 
+				Registrations = new List<Registration>(), 
+				SharedExperiences = new List<SharedExperience>()
+			};
+
+
+			_context.Services.Add(service);
             await _context.SaveChangesAsync();
             return null;
         }
 
-        public async Task<Service?> UpdateService(Service service)
+        public async Task<Service?> UpdateService(int id, CreateAndUpdateServiceDto service)
         {
-            var existingServiceId = await _context.Services.FindAsync(service.ServiceId);
+            var existingServiceId = await _context.Services.FindAsync(id);
             if (existingServiceId == null) return null;
 
-           _context.Services.Update(service);
-            await _context.SaveChangesAsync();
+
+			existingServiceId.Name = service.Name;
+			existingServiceId.Description = service.Description;
+			existingServiceId.Price = service.Price;
+			existingServiceId.ServiceDate = service.ServiceDate;
+			existingServiceId.CVR = service.CVR;
+
+			_context.Services.Update(existingServiceId);
+			await _context.SaveChangesAsync();
             return existingServiceId;
         }
 

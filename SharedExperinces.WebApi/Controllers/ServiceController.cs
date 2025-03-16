@@ -5,6 +5,7 @@ using SharedExperinces.WebApi.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using SharedExperinces.WebApi.Services;
+using SharedExperinces.WebApi.DTO;
 
 namespace SharedExperinces.WebApi.Controllers
 {
@@ -20,7 +21,7 @@ namespace SharedExperinces.WebApi.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> AddService([FromBody] Service service)
+		public async Task<IActionResult> AddService([FromBody] CreateAndUpdateServiceDto service)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
@@ -34,23 +35,16 @@ namespace SharedExperinces.WebApi.Controllers
 		}
 
 		[HttpPut("{id}")]
-		public async Task<IActionResult> UpdateService(int id, [FromBody] Service service)
+		public async Task<IActionResult> UpdateService(int id, [FromBody] CreateAndUpdateServiceDto service)
 		{
 			if (!ModelState.IsValid) // This checks the custom validation on Price
 			{
 				return BadRequest(ModelState); // If validation fails, return BadRequest
 			}
 
-			var existingService = await _service.GetServiceById(id);
+			await _service.UpdateService(id, service); 
 
-            if (existingService == null)
-			{
-				return NotFound(); // If the service with the given id is not found
-			}
-		
-			existingService.Price = service.Price; // This will trigger the Price validation
-
-			return Ok(existingService); // Return the updated service
+			return Ok(); 
 		}
 
 		[HttpDelete("{id}")]
@@ -63,7 +57,7 @@ namespace SharedExperinces.WebApi.Controllers
 				return NotFound();
 			}
 
-			return NoContent();
+			return Ok();
 		}
 	}
 }
