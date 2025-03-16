@@ -54,5 +54,19 @@ namespace SharedExperinces.WebApi.Services
                 .SelectMany(se => se.Services)
                 .ToListAsync();
         }
+
+        public async Task<List<Guest>?> GetGuestsInServiceInSharedExperience(int seId, int sId)
+        {
+            return await _context.SharedExperiences
+                .Where(se => se.SharedExperienceId == seId)  // Filter by SharedExperience ID
+                .SelectMany(se => se.Services
+                    .Where(s => s.ServiceId == sId)  // Filter by Service ID
+                    .SelectMany(s => s.Registrations.Select(r => r.Guest)) // Get Guests through Registrations
+                )
+                .ToListAsync();
+        }
+
+
+
     }
 }

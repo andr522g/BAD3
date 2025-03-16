@@ -57,5 +57,15 @@ namespace SharedExperinces.WebApi.Controllers
 
 			return Ok(services);
 		}
+
+		[HttpGet("GetGuestsRegisteredForServiceInSharedExperience")]
+		public async Task<IActionResult> GetGuestsInServiceInSharedExperience(int SeId, int sId)
+		{
+			var guests = await _service.GetGuestsInServiceInSharedExperience(SeId, sId);
+			if (guests == null || !guests.Any())
+				return NotFound($"No guests found in service in this shared expereince");
+
+			return Ok(guests);
+        }
     }
 }
