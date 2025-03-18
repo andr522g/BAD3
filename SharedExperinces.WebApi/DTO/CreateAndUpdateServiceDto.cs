@@ -8,8 +8,8 @@ namespace SharedExperinces.WebApi.DTO
 		public string Name { get; set; }
 		public string Description { get; set; }
 		[PriceValidation(ErrorMessage = "Price must be non-negative!")]
-		public decimal Price { get; set; }
+		public int Price { get; set; }
 		public DateTime ServiceDate { get; set; }
-		public string CVR { get; set; }  // Just the CVR, instead of the full Provider
+		public string PhoneNumber { get; set; } 
 	}
 }

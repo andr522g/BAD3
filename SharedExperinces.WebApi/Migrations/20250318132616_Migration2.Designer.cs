@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SharedExperinces.WebApi.DataAccess;
 
@@ -11,9 +12,11 @@ using SharedExperinces.WebApi.DataAccess;
 namespace SharedExperinces.WebApi.Migrations
 {
     [DbContext(typeof(SharedExperinceContext))]
-    partial class SharedExperinceContextModelSnapshot : ModelSnapshot
+    [Migration("20250318132616_Migration2")]
+    partial class Migration2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -157,8 +160,8 @@ namespace SharedExperinces.WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("ServiceDate")
                         .HasColumnType("datetime2");

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SharedExperinces.WebApi.DataAccess;
 
@@ -11,9 +12,11 @@ using SharedExperinces.WebApi.DataAccess;
 namespace SharedExperinces.WebApi.Migrations
 {
     [DbContext(typeof(SharedExperinceContext))]
-    partial class SharedExperinceContextModelSnapshot : ModelSnapshot
+    [Migration("20250318114536_Migration1")]
+    partial class Migration1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,7 +97,7 @@ namespace SharedExperinces.WebApi.Migrations
 
             modelBuilder.Entity("SharedExperinces.WebApi.Models.Provider", b =>
                 {
-                    b.Property<string>("PhoneNumber")
+                    b.Property<string>("CVR")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
@@ -109,7 +112,11 @@ namespace SharedExperinces.WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("PhoneNumber");
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CVR");
 
                     b.ToTable("Providers");
                 });
@@ -145,6 +152,10 @@ namespace SharedExperinces.WebApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ServiceId"));
 
+                    b.Property<string>("CVR")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -153,19 +164,15 @@ namespace SharedExperinces.WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("ServiceDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ServiceId");
 
-                    b.HasIndex("PhoneNumber");
+                    b.HasIndex("CVR");
 
                     b.ToTable("Services");
                 });
@@ -255,7 +262,7 @@ namespace SharedExperinces.WebApi.Migrations
                 {
                     b.HasOne("SharedExperinces.WebApi.Models.Provider", "Provider")
                         .WithMany("Services")
-                        .HasForeignKey("PhoneNumber")
+                        .HasForeignKey("CVR")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

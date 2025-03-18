@@ -8,11 +8,11 @@ namespace SharedExperinces.WebApi.Configurations
     {
         public void Configure(EntityTypeBuilder<Provider> builder)
         {
-            builder.HasKey(p => p.CVR);
+            builder.HasKey(p => p.PhoneNumber);
 
             builder.HasMany(p => p.Services)
                    .WithOne(s => s.Provider)
-                   .HasForeignKey(s => s.CVR)
+                   .HasForeignKey(s => s.PhoneNumber )
                    .OnDelete(DeleteBehavior.Cascade);
         }
     }

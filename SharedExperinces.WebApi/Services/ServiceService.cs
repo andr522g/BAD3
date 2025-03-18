@@ -19,9 +19,9 @@ namespace SharedExperinces.WebApi.Services
         public async Task<string?> AddNewService(CreateAndUpdateServiceDto dto)
         {
             // Check if Provider exists
-            var provider = await _context.Providers.FindAsync(dto.CVR);
+            var provider = await _context.Providers.FindAsync(dto.PhoneNumber);
             if (provider == null)
-                return $"Provider with CVR {dto.CVR} not found.";
+                return $"Provider with Id {dto.PhoneNumber} not found.";
 
 
 			var service = new Service
@@ -30,7 +30,6 @@ namespace SharedExperinces.WebApi.Services
 				Description = dto.Description,
 				Price = dto.Price,
 				ServiceDate = dto.ServiceDate,
-				CVR = dto.CVR,
 				Provider = provider, 
 				Discounts = new List<Discount>(), // 
 				Registrations = new List<Registration>(), 
@@ -53,7 +52,6 @@ namespace SharedExperinces.WebApi.Services
 			existingServiceId.Description = service.Description;
 			existingServiceId.Price = service.Price;
 			existingServiceId.ServiceDate = service.ServiceDate;
-			existingServiceId.CVR = service.CVR;
 
 			_context.Services.Update(existingServiceId);
 			await _context.SaveChangesAsync();
