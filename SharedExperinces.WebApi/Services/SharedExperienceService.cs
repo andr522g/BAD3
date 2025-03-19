@@ -47,7 +47,8 @@ namespace SharedExperinces.WebApi.Services
                 {
                     Name = r.Guest.Name
                 }))
-                .ToListAsync();
+				.Distinct()
+				.ToListAsync();
         }
 
         public async Task<List<ServiceNameDto>?> GetAllServicesInSharedExperience(int id) // Query 5
@@ -107,18 +108,18 @@ namespace SharedExperinces.WebApi.Services
 
         public async Task<List<ServiceGuestsSalesDto>?> GetServiceGuestSales() // Query 8
         {
-            return await _context.SharedExperiences
-                .Select(se => new ServiceGuestsSalesDto
-                {
-                    ServiceName = se.Name,
-                    GuestCount = se.Services
-                        .SelectMany(s => s.Registrations)
-                        .Count(),
-                    TotalSales = se.Services
-                        .SelectMany(s => s.Registrations)
-                        .Sum(r => r.Service.Price)
-                })
-                .ToListAsync();
-        }
-    }
+			return await _context.Services
+		.GroupBy(s => s.Name) // Group by service name
+		.Select(g => new ServiceGuestsSalesDto
+		{
+			ServiceName = g.Key, // Use the service name (group key)
+			GuestCount = g.SelectMany(s => s.Registrations).Count(), // Count of guests per service
+			TotalSales = g.SelectMany(s => s.Registrations).Sum(r => r.Service.Price) // Sum of prices per service
+		})
+		.ToListAsync();
+
+
+
+		}
+	}
 }

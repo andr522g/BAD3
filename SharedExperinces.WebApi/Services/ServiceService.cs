@@ -68,6 +68,7 @@ namespace SharedExperinces.WebApi.Services
             return await _context.Services
                 .Select(s => new BasicServiceListingDto
                 {
+                    Name = s.Name,
                     Description = s.Description,                    
                     Price = s.Price
                 })
@@ -91,8 +92,6 @@ namespace SharedExperinces.WebApi.Services
 
         public async Task<List<GroupSizesDto>> GetAllGroupSizes() // Query 9
         {
-           // var GroupCount = await _context.Services
-               // .SelectMany(s => s.Registrations).CountAsync();
 
 
             return await _context.Services

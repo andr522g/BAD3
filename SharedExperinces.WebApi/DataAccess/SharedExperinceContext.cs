@@ -48,7 +48,9 @@ namespace SharedExperinces.WebApi.DataAccess
 
 			var sharedExperience2 = new SharedExperience { Name = "Dinner Downtown", Description = "A fine dining experience at a highly-rated restaurant in the city center." };
 
-            sharedExperince1.Services.Add(service1);
+			var sharedExperience3 = new SharedExperience { Name = "Pottery Weekend", Description = "Pottery weekend with good collegues." };
+
+			sharedExperince1.Services.Add(service1);
 			sharedExperince1.Services.Add(service3);
 			sharedExperince1.Services.Add(service4);
 
@@ -71,10 +73,12 @@ namespace SharedExperinces.WebApi.DataAccess
             {
 				context.SharedExperiences.AddRange(
                     sharedExperince1,
-                    sharedExperience2
+                    sharedExperience2,
+                    sharedExperience3
                 );
                 context.SaveChanges();
             }
+
 
             if (!context.Guests.Any())
             {
@@ -93,8 +97,20 @@ namespace SharedExperinces.WebApi.DataAccess
                     new Registration { GuestId = 1, ServiceId = 4 },
                     new Registration {  GuestId = 2, ServiceId = 4 },
                     new Registration {  GuestId = 1, ServiceId = 1 },
-                    new Registration {  GuestId = 2, ServiceId = 1 }
-                );
+                    new Registration {  GuestId = 2, ServiceId = 1 },
+					new Registration { GuestId = 3, ServiceId = 1 },
+				    new Registration { GuestId = 4, ServiceId = 1 },
+					new Registration { GuestId = 1, ServiceId = 3 },
+					new Registration { GuestId = 2, ServiceId = 3 },
+					new Registration { GuestId = 3, ServiceId = 3 },
+					new Registration { GuestId = 4, ServiceId = 3 }
+
+
+
+
+
+
+				);
                 context.SaveChanges();
             }
 
