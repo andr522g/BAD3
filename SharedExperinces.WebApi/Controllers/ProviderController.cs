@@ -23,12 +23,19 @@ namespace SharedExperinces.WebApi.Controllers
             return Ok(service);
         }
 
+        [HttpGet("CollectProviderData")] // Query 1
+        public async Task<IActionResult> CollectProviderData()
+        {
+            var service = await _service.CollectProviderData();
+            if (service == null || !service.Any()) return NotFound("No providers found");
+            return Ok(service);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProvider(string id)
         {
             var service = await _service.GetProviderById(id);
             if (service == null) return NotFound();
-
             return Ok(service);
         }
     }

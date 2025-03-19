@@ -59,5 +59,24 @@ namespace SharedExperinces.WebApi.Controllers
 
 			return Ok();
 		}
-	}
+
+		[HttpGet("GetAllServicesBasic")] // Query 2
+		public async Task<IActionResult> GetAllServicesBasic()
+		{
+            var services = await _service.GetAllServicesBasic();
+            if (services == null || !services.Any())
+                return NotFound("No services found");
+            return Ok(services);
+        }
+
+		[HttpGet("GetGroupsizes")]
+        public async Task<IActionResult> GetAllGroupSizes()
+		{
+            var groupSizes = await _service.GetAllGroupSizes();
+            if (groupSizes == null || !groupSizes.Any())
+                return NotFound("No group sizes found");
+            return Ok(groupSizes);
+        }
+
+    }
 }

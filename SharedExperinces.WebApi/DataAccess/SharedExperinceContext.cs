@@ -39,17 +39,14 @@ namespace SharedExperinces.WebApi.DataAccess
                 context.SaveChanges();
             }
 
-
 			var service1 = new Service { Name = "Night at Noah's Hotel Single Room", Description = "A cozy single room at Noah's Hotel.", Price = 730, ServiceDate = new DateTime(2024, 6, 15), PhoneNumber = "+45 71555080" };
 			var service2 = new Service { Name = "Night at Noah's Hotel Double Room", Description = "A spacious double room at Noah's Hotel.", Price = 910, ServiceDate = new DateTime(2024, 6, 15), PhoneNumber = "+45 71555080" };
 			var service3 = new Service { Name = "Flight AAR – VIE", Description = "One-way flight from Aarhus (AAR) to Vienna (VIE).", Price = 1000, ServiceDate = new DateTime(2024, 7, 1), PhoneNumber = "+45 70707070" };
 			var service4 = new Service { Name = "Vienna Historic Center Walking Tour", Description = "Guided walking tour of Vienna's historic center.", Price = 100, ServiceDate = new DateTime(2024, 7, 2), PhoneNumber = "+45 73737373" };
 
-
 			var sharedExperince1 = new SharedExperience { Name = "Trip to Austria", Description = "A group trip exploring Vienna, including flights, hotel stays, and guided tours." };
 
 			var sharedExperience2 = new SharedExperience { Name = "Dinner Downtown", Description = "A fine dining experience at a highly-rated restaurant in the city center." };
-
 
             sharedExperince1.Services.Add(service1);
 			sharedExperince1.Services.Add(service3);
@@ -61,8 +58,6 @@ namespace SharedExperinces.WebApi.DataAccess
 
 			if (!context.Services.Any())
             {
-
-
 				context.Services.AddRange(
                   service1,
                   service2,
@@ -70,14 +65,10 @@ namespace SharedExperinces.WebApi.DataAccess
 				  service4
 				);
                 context.SaveChanges();
-            }
-
-			
+            }			
 
 			if (!context.SharedExperiences.Any())
             {
-
-
 				context.SharedExperiences.AddRange(
                     sharedExperince1,
                     sharedExperience2

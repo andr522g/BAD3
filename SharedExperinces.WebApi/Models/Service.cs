@@ -14,9 +14,6 @@ namespace SharedExperinces.WebApi.Models
         [PriceValidation]
         public int Price { get; set; }
         public DateTime ServiceDate { get; set; }
-
-
-        [ForeignKey("Provider")]
 		public string PhoneNumber { get; set; }
         public Provider Provider { get; set; }
         public ICollection<Discount> Discounts { get; set; }

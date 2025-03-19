@@ -63,6 +63,17 @@ namespace SharedExperinces.WebApi.Services
             return await _context.Services.ToListAsync();
         }
 
+        public async Task<List<BasicServiceListingDto>> GetAllServicesBasic() // Query 2
+        {
+            return await _context.Services
+                .Select(s => new BasicServiceListingDto
+                {
+                    Description = s.Description,                    
+                    Price = s.Price
+                })
+                .ToListAsync();
+        }
+
         public async Task<Service?> GetServiceById(int id)
         {
             return await _context.Services.FindAsync(id);
@@ -76,6 +87,21 @@ namespace SharedExperinces.WebApi.Services
             _context.Services.Remove(service);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<List<GroupSizesDto>> GetAllGroupSizes() // Query 9
+        {
+           // var GroupCount = await _context.Services
+               // .SelectMany(s => s.Registrations).CountAsync();
+
+
+            return await _context.Services
+                 .Select(s => new GroupSizesDto
+                {
+                    ServiceName = s.Name,
+                    GroupSize = s.Registrations.Count()
+
+                }).ToListAsync();
         }
     }
 }
