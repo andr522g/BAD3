@@ -1,8 +1,12 @@
+using AuthDemo.Models;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
 using SharedExperinces.WebApi.DataAccess;
 using SharedExperinces.WebApi.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,12 +27,53 @@ builder.Services.AddDbContext<SharedExperinceContext>(options =>
 	options.UseSqlServer(connectionString));
 
 
+builder.Services.AddIdentity<ApiUser, IdentityRole>()
+    .AddEntityFrameworkStores<SharedExperinceContext>();
+
+//  JWT
+builder.Services.AddAuthentication("Jwt")
+    .AddJwtBearer("Jwt", o =>
+    {
+        o.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["JWT:Audience"],
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey =
+                new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
+            ValidateLifetime = true
+        };
+    });
+
+builder.Services.AddAuthorization();   // we’ll add policies later
+
 builder.Services.AddTransient<ServiceService>();
 builder.Services.AddTransient<SharedExperienceService>();
 builder.Services.AddTransient<ProviderService>();
 
 var app = builder.Build();
 
+
+app.Lifetime.ApplicationStarted.Register(async () =>
+{
+    using var scope = app.Services.CreateScope();
+    var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApiUser>>();
+
+    if (!await roleMgr.RoleExistsAsync("Admin"))
+        await roleMgr.CreateAsync(new IdentityRole("Admin"));
+
+    var admin = await userMgr.FindByEmailAsync("admin@demo.com");
+    if (admin == null)
+    {
+        admin = new ApiUser { UserName = "admin@demo.com", Email = "admin@demo.com" };
+        await userMgr.CreateAsync(admin, "Admin123$");
+        await userMgr.AddToRoleAsync(admin, "Admin");
+    }
+});
 
 using (var scope = app.Services.CreateScope())
 {
@@ -48,6 +93,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

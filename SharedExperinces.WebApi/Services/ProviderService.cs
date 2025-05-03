@@ -34,6 +34,6 @@ namespace SharedExperinces.WebApi.Services
         public async Task<Provider?> GetProviderById(string id)
         {
             return await _context.Providers.FindAsync(id);
-        }
+        }  
     }
 }

@@ -1,10 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using AuthDemo.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SharedExperinces.WebApi.Models;
 using System.Reflection;
 
 namespace SharedExperinces.WebApi.DataAccess
 {
-	public class SharedExperinceContext : DbContext
+	public class SharedExperinceContext : IdentityDbContext<ApiUser>
 	{
         public SharedExperinceContext(DbContextOptions<SharedExperinceContext> options) 
 			: base(options) { }
