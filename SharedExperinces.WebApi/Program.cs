@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using SharedExperinces.WebApi.DataAccess;
 using SharedExperinces.WebApi.Services;
 using System.Text;
@@ -48,6 +49,33 @@ builder.Services.AddAuthentication("Jwt")
         };
     });
 
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
 builder.Services.AddAuthorization();   // we’ll add policies later
 
 builder.Services.AddTransient<ServiceService>();
@@ -57,7 +85,7 @@ builder.Services.AddTransient<ProviderService>();
 var app = builder.Build();
 
 
-app.Lifetime.ApplicationStarted.Register(async () =>
+/* app.Lifetime.ApplicationStarted.Register(async () =>
 {
     using var scope = app.Services.CreateScope();
     var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -73,7 +101,7 @@ app.Lifetime.ApplicationStarted.Register(async () =>
         await userMgr.CreateAsync(admin, "Admin123$");
         await userMgr.AddToRoleAsync(admin, "Admin");
     }
-});
+}); */
 
 using (var scope = app.Services.CreateScope())
 {
