@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SharedExperinces.WebApi.DataAccess;
+using SharedExperinces.WebApi.Models;
 using SharedExperinces.WebApi.Services;
 using System.Text;
 
@@ -19,7 +20,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-var connectionString = "Data Source=127.0.0.1,1433;Database=SharedExperincesDB;User Id=sa;Password=Password,1;TrustServerCertificate=True";
+var connectionString = "Data Source=127.0.0.1,1433;Database=SharedExperincesDB;User Id=sa;Password=Cefemivo+f113;TrustServerCertificate=True";
   
 
 Console.WriteLine($"Connection string: {connectionString}");
@@ -85,23 +86,7 @@ builder.Services.AddTransient<ProviderService>();
 var app = builder.Build();
 
 
-/* app.Lifetime.ApplicationStarted.Register(async () =>
-{
-    using var scope = app.Services.CreateScope();
-    var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApiUser>>();
 
-    if (!await roleMgr.RoleExistsAsync("Admin"))
-        await roleMgr.CreateAsync(new IdentityRole("Admin"));
-
-    var admin = await userMgr.FindByEmailAsync("admin@demo.com");
-    if (admin == null)
-    {
-        admin = new ApiUser { UserName = "admin@demo.com", Email = "admin@demo.com" };
-        await userMgr.CreateAsync(admin, "Admin123$");
-        await userMgr.AddToRoleAsync(admin, "Admin");
-    }
-}); */
 
 using (var scope = app.Services.CreateScope())
 {
@@ -110,6 +95,45 @@ using (var scope = app.Services.CreateScope())
 	dbContext.Database.Migrate(); 
 
 	SharedExperinceContext.Seed(dbContext); 
+}
+
+
+/*
+
+app.Lifetime.ApplicationStarted.Register(async () =>
+{
+	using var scope = app.Services.CreateScope();
+	var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+	var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApiUser>>();
+
+	if (!await roleMgr.RoleExistsAsync("Admin"))
+		await roleMgr.CreateAsync(new IdentityRole("Admin"));
+
+	var admin = await userMgr.FindByEmailAsync("admin@demo.com");
+	if (admin == null)
+	{
+		admin = new ApiUser { UserName = "admin@demo.com", Email = "admin@demo.com" };
+		await userMgr.CreateAsync(admin, "Admin123$");
+		await userMgr.AddToRoleAsync(admin, "Admin");
+	}
+}); 
+
+*/
+
+using (var scope = app.Services.CreateScope())
+{
+	var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+	string[] roleNames = { RoleNames.Admin, RoleNames.Manager, RoleNames.Provider, RoleNames.Guest };
+
+	foreach (var roleName in roleNames)
+	{
+		var roleExists = await roleManager.RoleExistsAsync(roleName);
+		if (!roleExists)
+		{
+			await roleManager.CreateAsync(new IdentityRole(roleName));
+		}
+	}
 }
 
 
