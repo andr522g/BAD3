@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using SharedExperinces.WebApi.DataAccess;
 using SharedExperinces.WebApi.Models;
 using SharedExperinces.WebApi.Services;
-using Microsoft.Extensions.Logging;                // NEW
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;                // NEW
 
 namespace SharedExperinces.WebApi.Controllers
 {
@@ -46,6 +47,7 @@ namespace SharedExperinces.WebApi.Controllers
 			return Ok(experiences);
 		}
 
+        [Authorize(Roles = "Admin,Manager")]
 		[HttpGet("GetGuestsRegisteredForExperience")] // Query 4
 		public async Task<IActionResult> GetAllGuestsInSharedExperience(int id)
 		{
@@ -64,6 +66,7 @@ namespace SharedExperinces.WebApi.Controllers
 			return Ok(services);
 		}
 
+		[Authorize(Roles = "Admin,Manager")]
 		[HttpGet("GetGuestsRegisteredForServiceInSharedExperience")] // Query 6
         public async Task<IActionResult> GetGuestsInServiceInSharedExperience(int SeId, int sId)
 		{
@@ -74,6 +77,7 @@ namespace SharedExperinces.WebApi.Controllers
 			return Ok(guests);
         }
 
+		[Authorize(Roles = "Admin,Manager")]
 		[HttpGet("MinAvgMaxPrice")] // Query 7
         public async Task<IActionResult> MinAvgMaxPrice(int SeId)
 		{
@@ -83,6 +87,7 @@ namespace SharedExperinces.WebApi.Controllers
             return Ok(prices);
         }
 
+		[Authorize(Roles = "Admin,Manager")]
 		[HttpGet("GetServiceGuestSales")] // Query 8
         public async Task<IActionResult> GetServiceGuestSales()
 		{
