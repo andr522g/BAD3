@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace SharedExperinces.WebApi.Models
 {
-    [BsonIgnoreExtraElements]          // ignore anything we don’t map
+    [BsonIgnoreExtraElements]          // ignore anything we don't map
     public class LogEntry
     {
         [BsonId, BsonRepresentation(BsonType.ObjectId)]
@@ -13,7 +13,7 @@ namespace SharedExperinces.WebApi.Models
 
         public DateTime Timestamp { get; set; }        // written by Serilog
 
-        // the Serilog BSON sink stores the level in a top-level “Level”
+        // the Serilog BSON sink stores the level in a top-level "Level"
         public string Level { get; set; } = null!;
 
         public string MessageTemplate { get; set; } = null!;
@@ -26,20 +26,35 @@ namespace SharedExperinces.WebApi.Models
 
         [BsonIgnore]
         public string ActionDescription
-            => Properties.Description ?? Properties.Method ?? "Unknown";
+            => Properties.Description ?? Properties.Method ?? Properties.RequestMethod ?? "Unknown";
     }
 
     [BsonIgnoreExtraElements]
     public class LogProperties
     {
+        // User information
         public string? UserId { get; set; }
-        public string? UserRole { get; set; }
+        public string? UserName { get; set; }
         public string? UserEmail { get; set; }
+        public string? UserRole { get; set; }
+        
+        // Request information
         public string? Method { get; set; }
         public string? RequestMethod { get; set; }
         public string? RequestPath { get; set; }
+        public string? RequestHost { get; set; }
+        public string? RequestScheme { get; set; }
+        
+        // Operation details
         public string? Description { get; set; }
+        public string? Activity { get; set; }
+        public string? Operation { get; set; }
+        
+        // Response information
         public int? StatusCode { get; set; }
         public double? Elapsed { get; set; }
+        
+        // Remote client information
+        public string? RemoteIpAddress { get; set; }
     }
 }
