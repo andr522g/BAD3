@@ -17,6 +17,7 @@ public class AccountController : ControllerBase
     public AccountController(UserManager<ApiUser> um, IConfiguration cfg)
     { _userMgr = um; _cfg = cfg; }
 
+    
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterDto dto)
     {
