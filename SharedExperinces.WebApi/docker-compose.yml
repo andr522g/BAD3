@@ -1,0 +1,57 @@
+﻿version: '3.8'
+
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: SharedExperinces.WebApi/Dockerfile
+    container_name: SharedExperinces.WebApi
+    ports:
+      - "8080:80"
+      - "8443:443"
+    depends_on:
+      - sqlserver
+      - mongodb
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=sqlserver;Database=SharedExperincesDB;User Id=sa;Password=Cefemivo+f113;TrustServerCertificate=True
+      - ConnectionStrings__MongoDB=mongodb://mongodb:27017
+      - Serilog__WriteTo__2__Args__databaseUrl=mongodb://mongodb:27017/LoggingDb
+      - JWT__Issuer=SecureApi
+      - JWT__Audience=SecureApi
+    networks:
+      - shared-experiences-network
+    volumes:
+      - ./logs:/app/logs
+      
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: shared-experiences-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Cefemivo+f113
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - shared-experiences-network
+    
+  mongodb:
+    image: mongo:latest
+    container_name: shared-experiences-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - shared-experiences-network
+
+networks:
+  shared-experiences-network:
+    driver: bridge
+
+volumes:
+  sqlserver-data:
+  mongodb-data: 
