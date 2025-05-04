@@ -5,11 +5,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
 using SharedExperinces.WebApi.DataAccess;
+using SharedExperinces.WebApi.Models;
 using SharedExperinces.WebApi.Services;
 using System.Text;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((ctx, cfg) =>
+{
+    cfg.ReadFrom.Configuration(ctx.Configuration);
+});
+
 
 // Add services to the container.
 
@@ -23,6 +32,18 @@ var connectionString = "Data Source=127.0.0.1,1433;Database=SharedExperincesDB;U
   
 
 Console.WriteLine($"Connection string: {connectionString}");
+
+builder.Services.Configure<LoggingDatabaseSettings>(
+    builder.Configuration.GetSection("MongoDbSettings"));
+
+builder.Services.AddSingleton<IMongoClient>(sp =>
+{
+    var settings = builder.Configuration.GetSection("MongoDbSettings").Get<LoggingDatabaseSettings>();
+    return new MongoClient(settings.ConnectionString);
+});
+
+
+
 
 builder.Services.AddDbContext<SharedExperinceContext>(options =>
 	options.UseSqlServer(connectionString));
@@ -83,6 +104,18 @@ builder.Services.AddTransient<SharedExperienceService>();
 builder.Services.AddTransient<ProviderService>();
 
 var app = builder.Build();
+
+app.UseSerilogRequestLogging(opts =>
+{
+    // Export method & path – the Filter in appsettings picks them up
+    opts.EnrichDiagnosticContext = (diag, ctx) =>
+    {
+        diag.Set("RequestMethod", ctx.Request.Method);
+        diag.Set("RequestPath", ctx.Request.Path);
+        diag.Set("UserName", ctx.User.Identity?.Name);
+    };
+});
+
 
 
 /* app.Lifetime.ApplicationStarted.Register(async () =>

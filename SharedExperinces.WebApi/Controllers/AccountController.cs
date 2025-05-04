@@ -13,6 +13,7 @@ public class AccountController : ControllerBase
 {
     private readonly UserManager<ApiUser> _userMgr;
     private readonly IConfiguration _cfg;
+
     public AccountController(UserManager<ApiUser> um, IConfiguration cfg)
     { _userMgr = um; _cfg = cfg; }
 
