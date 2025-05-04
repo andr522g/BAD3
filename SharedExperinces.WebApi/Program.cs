@@ -13,6 +13,7 @@ using System.Text;
 using Serilog;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((ctx, cfg) =>
@@ -29,7 +30,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-var connectionString = "Data Source=127.0.0.1,1433;Database=SharedExperincesDB;User Id=sa;Password=Cefemivo+f113;TrustServerCertificate=True";
+var connectionString = "Data Source=127.0.0.1,1433;Database=SharedExperincesDB;User Id=sa;Password=Password,1;TrustServerCertificate=True";
   
 
 Console.WriteLine($"Connection string: {connectionString}");
@@ -118,10 +119,16 @@ builder.Services.AddAuthorization();   // we’ll add policies later
 builder.Services.AddTransient<ServiceService>();
 builder.Services.AddTransient<SharedExperienceService>();
 builder.Services.AddTransient<ProviderService>();
+builder.Services.AddSingleton<LogService>();        
+
+
+
 
 var app = builder.Build();
 
 app.UseCors("AllowAll");
+
+
 
 
 app.UseSerilogRequestLogging(opts =>
@@ -151,7 +158,9 @@ using (var scope = app.Services.CreateScope())
 
 
 
-app.Lifetime.ApplicationStarted.Register(async () =>
+/*
+ * 
+ * app.Lifetime.ApplicationStarted.Register(async () =>
 {
 	using var scope = app.Services.CreateScope();
 	var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -168,6 +177,8 @@ app.Lifetime.ApplicationStarted.Register(async () =>
 		await userMgr.AddToRoleAsync(admin, "Admin");
 	}
 }); 
+ 
+*/
 
 
 
