@@ -14,9 +14,13 @@ services:
       - mongodb
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Data Source=sqlserver;Database=SharedExperincesDB;User Id=sa;Password=Cefemivo+f113;TrustServerCertificate=True
+      - ConnectionStrings__DefaultConnection=Data Source=127.0.0.1,1433;Database=SharedExperincesDB;User Id=sa;Password=Cefemivo+f113;TrustServerCertificate=True
       - ConnectionStrings__MongoDB=mongodb://mongodb:27017
-      - Serilog__WriteTo__2__Args__databaseUrl=mongodb://mongodb:27017/LoggingDb
+      - Serilog__WriteTo__0__Name=MongoDB 
+      - Serilog__WriteTo__0__Args__databaseUrl=mongodb://mongodb:27017/LoggingDb
+      - Serilog__WriteTo__0__Args__collectionName=log
+      - Serilog__WriteTo__0__Args__cappedMaxSizeMb=50
+      - Serilog__WriteTo__0__Args__cappedMaxDocuments=10000
       - JWT__Issuer=SecureApi
       - JWT__Audience=SecureApi
     networks:
