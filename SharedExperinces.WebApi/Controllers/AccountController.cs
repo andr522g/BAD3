@@ -40,11 +40,8 @@ public class AccountController : ControllerBase
             _logger.LogInformation("RegisterGuest for {Email}", dto.Email);
         }
 
-
-
         var user = new ApiUser { UserName = dto.Email, Email = dto.Email,  };
         var result = await _userMgr.CreateAsync(user, dto.Password);
-
 
         if (result.Succeeded)
         {

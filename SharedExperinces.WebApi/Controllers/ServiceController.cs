@@ -18,7 +18,6 @@ namespace SharedExperinces.WebApi.Controllers
             _logger = logger;
         }
 
-
         [HttpPost]
 		public async Task<IActionResult> AddService([FromBody] CreateAndUpdateServiceDto service)
 		{
