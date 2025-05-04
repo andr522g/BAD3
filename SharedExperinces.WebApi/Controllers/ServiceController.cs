@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SharedExperinces.WebApi.DataAccess;
-using SharedExperinces.WebApi.Models;
-using System.Linq;
-using System.Threading.Tasks;
 using SharedExperinces.WebApi.Services;
 using SharedExperinces.WebApi.DTO;
+using Microsoft.Extensions.Logging;             
 
 namespace SharedExperinces.WebApi.Controllers
 {
@@ -13,20 +9,26 @@ namespace SharedExperinces.WebApi.Controllers
 	[ApiController]
 	public class ServiceController : ControllerBase
 	{
-		private readonly ServiceService _service;
+        private readonly ServiceService _service;
+        private readonly ILogger<ServiceController> _logger;    
 
-		public ServiceController(ServiceService service)
-		{
-			_service = service;
-		}
+        public ServiceController(ServiceService service, ILogger<ServiceController> logger)                  
+        {
+            _service = service;
+            _logger = logger;
+        }
 
-		[HttpPost]
+
+        [HttpPost]
 		public async Task<IActionResult> AddService([FromBody] CreateAndUpdateServiceDto service)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
 
-			var errorMessage = await _service.AddNewService(service);
+            _logger.LogInformation("POST AddService {@log}",
+               new { PostedBy = User.Identity?.Name, Payload = service});   
+
+            var errorMessage = await _service.AddNewService(service);
 
 			if (errorMessage != null)
 				return BadRequest(errorMessage);
@@ -42,7 +44,11 @@ namespace SharedExperinces.WebApi.Controllers
 				return BadRequest(ModelState); // If validation fails, return BadRequest
 			}
 
-			await _service.UpdateService(id, service); 
+
+            _logger.LogInformation("PUT UpdateService {@log}",
+                new { Id = id, PostedBy = User.Identity?.Name, Payload = service });   // NEW
+
+            await _service.UpdateService(id, service); 
 
 			return Ok(); 
 		}
@@ -50,7 +56,10 @@ namespace SharedExperinces.WebApi.Controllers
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteService(int id)
 		{
-			var service = await _service.DeleteServiceById(id);
+            _logger.LogInformation("DELETE DeleteService {@log}",
+				 new { Id = id, PostedBy = User.Identity?.Name });         
+
+            var service = await _service.DeleteServiceById(id);
 
 			if (service == false)
 			{

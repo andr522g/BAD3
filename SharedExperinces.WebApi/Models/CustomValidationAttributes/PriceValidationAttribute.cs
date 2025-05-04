@@ -12,7 +12,7 @@ namespace SharedExperinces.WebApi.Models.CustomValidationAttributes
 		}
 		public override bool IsValid(object value)
 		{
-			if (value is decimal price)
+			if (value is int price)
 			{
 				return price >= 0;
 			}

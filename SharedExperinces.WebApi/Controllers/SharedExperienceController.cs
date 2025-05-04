@@ -3,27 +3,33 @@ using Microsoft.AspNetCore.Mvc;
 using SharedExperinces.WebApi.DataAccess;
 using SharedExperinces.WebApi.Models;
 using SharedExperinces.WebApi.Services;
+using Microsoft.Extensions.Logging;                // NEW
 
 namespace SharedExperinces.WebApi.Controllers
 {
-	[Route("api/[controller]")]
-	[ApiController]
-	public class SharedExperienceController : ControllerBase
-	{
-		private readonly SharedExperienceService _service;
+    [Route("api/[controller]")]
+    [ApiController]
+    public class SharedExperienceController : ControllerBase
+    {
+        private readonly SharedExperienceService _service;
+        private readonly ILogger<SharedExperienceController> _logger;  
 
-		public SharedExperienceController(SharedExperienceService service)
-		{
-			_service = service;
-		}
+        public SharedExperienceController(SharedExperienceService service, ILogger<SharedExperienceController> logger)               
+        {
+            _service = service;
+            _logger = logger;
+        }
 
-		[HttpPost]
+        [HttpPost]
 		public async Task<IActionResult> AddExperience([FromBody] SharedExperience experience)
 		{
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            _logger.LogInformation("POST AddExperience {@log}",
+                new { PostedBy = User.Identity?.Name, Payload = experience });   
 
             await _service.createExperince(experience);
 

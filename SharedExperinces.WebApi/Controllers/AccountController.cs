@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using SharedExperinces.WebApi.Controllers;
 using SharedExperinces.WebApi.DTO;
 using SharedExperinces.WebApi.Models;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,9 +16,14 @@ public class AccountController : ControllerBase
 {
     private readonly UserManager<ApiUser> _userMgr;
     private readonly IConfiguration _cfg;
+    private readonly ILogger<AccountController> _logger;
 
-    public AccountController(UserManager<ApiUser> um, IConfiguration cfg)
-    { _userMgr = um; _cfg = cfg; }
+    public AccountController(UserManager<ApiUser> um, IConfiguration cfg, ILogger<AccountController> logger)
+    { 
+        _userMgr = um; 
+        _cfg = cfg;
+        _logger = logger;
+    }
 
     
     [HttpPost("register/guest")]
@@ -26,6 +32,15 @@ public class AccountController : ControllerBase
 	public async Task<IActionResult> RegisterGuest(RegisterDto dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        // ─── 1.  (optional) enrich so we survive the RequestMethod filter ──────────
+        using (Serilog.Context.LogContext.PushProperty("RequestMethod", "POST"))
+        {
+            // ─── 2.  write the log entry without the password ──────────────────────
+            _logger.LogInformation("RegisterGuest for {Email}", dto.Email);
+        }
+
+
 
         var user = new ApiUser { UserName = dto.Email, Email = dto.Email,  };
         var result = await _userMgr.CreateAsync(user, dto.Password);
@@ -45,22 +60,28 @@ public class AccountController : ControllerBase
 
 	[HttpPost("register")]
 	[Authorize(Roles = RoleNames.Admin)]
-	public async Task<IActionResult> RegisterUser([FromBody] RegisterDto model)
+	public async Task<IActionResult> RegisterUser([FromBody] RegisterDto dto)
 	{
 
-		if (model.Role == RoleNames.Guest)
+		if (dto.Role == RoleNames.Guest)
 			return BadRequest("Guests must self-register.");
 
-		var user = new ApiUser { UserName = model.UserName, Email = model.Email };
+        using (Serilog.Context.LogContext.PushProperty("RequestMethod", "POST"))
+        {
+            // ─── 2.  write the log entry without the password ──────────────────────
+            _logger.LogInformation("Register for {Email}", dto.Email);
+        }
 
-		var result = await _userMgr.CreateAsync(user, model.Password);
+        var user = new ApiUser { UserName = dto.UserName, Email = dto.Email };
+
+		var result = await _userMgr.CreateAsync(user, dto.Password);
 
 		if (!result.Succeeded)
 			return BadRequest(result.Errors);
 
-		await _userMgr.AddToRoleAsync(user, model.Role);
+		await _userMgr.AddToRoleAsync(user, dto.Role);
 
-		return Ok($"{model.Role} user registered successfully.");
+		return Ok($"{dto.Role} user registered successfully.");
 
 	}
 
@@ -71,6 +92,12 @@ public class AccountController : ControllerBase
         var user = await _userMgr.FindByEmailAsync(dto.Email);
         if (user == null || !await _userMgr.CheckPasswordAsync(user, dto.Password))
             return Unauthorized();
+
+        using (Serilog.Context.LogContext.PushProperty("RequestMethod", "POST"))
+        {
+            // ─── 2.  write the log entry without the password ──────────────────────
+            _logger.LogInformation("Login for {Email}", dto.Email);
+        }
 
         var token = await BuildJwt(user);
         return Ok(token);
