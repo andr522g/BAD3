@@ -25,8 +25,37 @@ public class AccountController : ControllerBase
         _logger = logger;
     }
 
-    
-    [HttpPost("register/guest")]
+
+	[Authorize(Roles = "Admin")]
+	[HttpPost("register")]
+	public async Task<IActionResult> RegisterUser([FromBody] RegisterDto dto)
+	{
+
+		if (dto.Role == RoleNames.Guest)
+			return BadRequest("Guests must self-register.");
+
+		using (Serilog.Context.LogContext.PushProperty("RequestMethod", "POST"))
+		{
+			// ─── 2.  write the log entry without the password ──────────────────────
+			_logger.LogInformation("Register for {Email}", dto.Email);
+		}
+
+		var user = new ApiUser { UserName = dto.UserName, Email = dto.Email };
+
+		var result = await _userMgr.CreateAsync(user, dto.Password);
+
+		if (!result.Succeeded)
+			return BadRequest(result.Errors);
+
+		await _userMgr.AddToRoleAsync(user, dto.Role);
+
+		return Ok($"{dto.Role} user registered successfully.");
+
+	}
+
+
+
+	[HttpPost("register/guest")]
 	[AllowAnonymous]
 
 	public async Task<IActionResult> RegisterGuest(RegisterDto dto)
@@ -55,36 +84,12 @@ public class AccountController : ControllerBase
 
 
 
-	[HttpPost("register")]
-	[Authorize(Roles = RoleNames.Admin)]
-	public async Task<IActionResult> RegisterUser([FromBody] RegisterDto dto)
-	{
-
-		if (dto.Role == RoleNames.Guest)
-			return BadRequest("Guests must self-register.");
-
-        using (Serilog.Context.LogContext.PushProperty("RequestMethod", "POST"))
-        {
-            // ─── 2.  write the log entry without the password ──────────────────────
-            _logger.LogInformation("Register for {Email}", dto.Email);
-        }
-
-        var user = new ApiUser { UserName = dto.UserName, Email = dto.Email };
-
-		var result = await _userMgr.CreateAsync(user, dto.Password);
-
-		if (!result.Succeeded)
-			return BadRequest(result.Errors);
-
-		await _userMgr.AddToRoleAsync(user, dto.Role);
-
-		return Ok($"{dto.Role} user registered successfully.");
-
-	}
+	
 
 
 	[HttpPost("login")]
-    public async Task<IActionResult> Login(LoginDto dto)
+	[AllowAnonymous]
+	public async Task<IActionResult> Login(LoginDto dto)
     {
         var user = await _userMgr.FindByEmailAsync(dto.Email);
         if (user == null || !await _userMgr.CheckPasswordAsync(user, dto.Password))
@@ -111,7 +116,10 @@ public class AccountController : ControllerBase
 
 		var claims = new List<Claim>
 	{
-		new Claim(ClaimTypes.Name, user.UserName)
+		new Claim(ClaimTypes.Name, user.UserName),
+
+		 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+		 new Claim(ClaimTypes.NameIdentifier, user.Id)
 	};
 
 		claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));

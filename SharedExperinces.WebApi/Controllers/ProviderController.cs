@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SharedExperinces.WebApi.Services;
@@ -24,6 +25,7 @@ namespace SharedExperinces.WebApi.Controllers
         }
 
         [HttpGet("CollectProviderData")] // Query 1
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> CollectProviderData()
         {
             var service = await _service.CollectProviderData();
