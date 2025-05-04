@@ -11,6 +11,7 @@ using SharedExperinces.WebApi.Models;
 using SharedExperinces.WebApi.Services;
 using System.Text;
 using Serilog;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +29,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-var connectionString = "Data Source=127.0.0.1,1433;Database=SharedExperincesDB;User Id=sa;Password=Password,1;TrustServerCertificate=True";
+var connectionString = "Data Source=127.0.0.1,1433;Database=SharedExperincesDB;User Id=sa;Password=Cefemivo+f113;TrustServerCertificate=True";
   
 
 Console.WriteLine($"Connection string: {connectionString}");
@@ -52,23 +53,38 @@ builder.Services.AddDbContext<SharedExperinceContext>(options =>
 builder.Services.AddIdentity<ApiUser, IdentityRole>()
     .AddEntityFrameworkStores<SharedExperinceContext>();
 
-//  JWT
-builder.Services.AddAuthentication("Jwt")
-    .AddJwtBearer("Jwt", o =>
-    {
-        o.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = builder.Configuration["JWT:Issuer"],
-            ValidateAudience = true,
-            ValidAudience = builder.Configuration["JWT:Audience"],
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey =
-                new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
-            ValidateLifetime = true
-        };
-    });
+
+
+
+
+
+
+
+Console.WriteLine("JWT:Issuer = " + builder.Configuration["JWT:Issuer"]);
+Console.WriteLine("JWT:Audience = " + builder.Configuration["JWT:Audience"]);
+Console.WriteLine("JWT:Key = " + builder.Configuration["JWT:Key"]);
+
+
+builder.Services.AddAuthentication(options =>
+{
+	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+	options.TokenValidationParameters = new TokenValidationParameters
+	{
+		ValidateIssuer = true,
+		ValidateAudience = true,
+		ValidateLifetime = true,
+		ValidateIssuerSigningKey = true,
+		ValidIssuer = builder.Configuration["JWT:Issuer"],
+		ValidAudience = builder.Configuration["JWT:Audience"],
+		IssuerSigningKey = new SymmetricSecurityKey(
+			Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+	};
+});
+
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -104,6 +120,9 @@ builder.Services.AddTransient<SharedExperienceService>();
 builder.Services.AddTransient<ProviderService>();
 
 var app = builder.Build();
+
+app.UseCors("AllowAll");
+
 
 app.UseSerilogRequestLogging(opts =>
 {
@@ -177,6 +196,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseRouting();              
 
 app.UseAuthentication();
 
