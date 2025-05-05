@@ -14,8 +14,8 @@ services:
       - mongodb
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Data Source=127.0.0.1,1433;Database=SharedExperincesDB;User Id=sa;Password=Cefemivo+f113;TrustServerCertificate=True
-      - ConnectionStrings__MongoDB=mongodb://mongodb:27017
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=SharedExperincesDB;User Id=sa;Password=Your_password123;
+      - MongoDbSettings__ConnectionString=mongodb://mongodb:27017
       - Serilog__WriteTo__0__Name=MongoDB 
       - Serilog__WriteTo__0__Args__databaseUrl=mongodb://mongodb:27017/LoggingDb
       - Serilog__WriteTo__0__Args__collectionName=log
@@ -41,6 +41,12 @@ services:
       - sqlserver-data:/var/opt/mssql
     networks:
       - shared-experiences-network
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Cefemivo+f113", "-Q", "SELECT 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
     
   mongodb:
     image: mongo:latest
