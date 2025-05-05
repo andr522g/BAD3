@@ -15,7 +15,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:8080
       - ASPNETCORE_HTTP_PORTS=8080
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=SharedExperincesDB2;User Id=sa;Password=Zerefez7253!;TrustServerCertificate=True
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=SharedExperincesDB;User Id=sa;Password=Cefemivo+f113;TrustServerCertificate=True
       - MongoDbSettings__ConnectionString=mongodb://mongodb:27017
       - Serilog__WriteTo__0__Name=MongoDB 
       - Serilog__WriteTo__0__Args__databaseUrl=mongodb://mongodb:27017/LoggingDb
@@ -35,7 +35,7 @@ services:
     container_name: shared-experiences-sqlserver2
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=Zerefez7253!
+      - SA_PASSWORD=Cefemivo+f113
       - MSSQL_PID=Express
     ports:
       - "1433:1433"
@@ -44,7 +44,7 @@ services:
     networks:
       - shared-experiences-network
     healthcheck:
-      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Zerefez7253!", "-Q", "SELECT 1"]
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Cefemivo+f113", "-Q", "SELECT 1"]
       interval: 30s
       timeout: 10s
       retries: 5

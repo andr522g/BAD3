@@ -72,7 +72,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-var connectionString = "Data Source=sqlserver,1433;Database=SharedExperincesDB2;User Id=sa;Password=Zerefez7253!;TrustServerCertificate=True";
+var connectionString = "Data Source=sqlserver,1433;Database=SharedExperincesDB;User Id=sa;Password=Cefemivo+f113;TrustServerCertificate=True";
   
 
 Console.WriteLine($"Connection string: {connectionString}");
