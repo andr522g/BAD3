@@ -27,10 +27,52 @@ builder.Host.UseSerilog((ctx, cfg) =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "SharedExperiences API",
+        Version = "v1",
+        Description = "SharedExperiences Web API"
+    });
 
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
-var connectionString = "Data Source=sqlserver,1433;Database=SharedExperincesDB;User Id=sa;Password=Cefemivo+f113;TrustServerCertificate=True";
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
+var connectionString = "Data Source=sqlserver,1433;Database=SharedExperincesDB2;User Id=sa;Password=Zerefez7253!;TrustServerCertificate=True";
   
 
 Console.WriteLine($"Connection string: {connectionString}");
@@ -87,34 +129,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 
-builder.Services.AddSwaggerGen(options =>
-{
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Description = "Please enter token",
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "bearer"
-    });
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
-});
-
-builder.Services.AddAuthorization();   // we’ll add policies later
+builder.Services.AddAuthorization();   // we'll add policies later
 
 builder.Services.AddTransient<ServiceService>();
 builder.Services.AddTransient<SharedExperienceService>();
@@ -128,8 +143,26 @@ var app = builder.Build();
 
 app.UseCors("AllowAll");
 
+// Add root path redirection to Swagger
+app.MapGet("/", () => Results.Redirect("/swagger"));
 
+// Always enable Swagger in all environments
+app.UseSwagger(c => {
+    c.RouteTemplate = "swagger/{documentName}/swagger.json";
+});
 
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "SharedExperiences API V1");
+    c.RoutePrefix = "swagger";
+});
+
+// Only use HTTPS redirection in development, not in Docker
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+    app.UseHsts();
+}
 
 app.UseSerilogRequestLogging(opts =>
 {
@@ -236,11 +269,6 @@ using (var scope = app.Services.CreateScope())
 
 
 
-
-app.UseSwagger();
-app.UseSwaggerUI();
-
-app.UseHttpsRedirection();
 
 app.UseRouting();              
 

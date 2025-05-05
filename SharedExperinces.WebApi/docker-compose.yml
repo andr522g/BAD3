@@ -7,14 +7,15 @@ services:
       dockerfile: SharedExperinces.WebApi/Dockerfile
     container_name: SharedExperinces.WebApi
     ports:
-      - "8080:80"
-      - "8443:443"
+      - "8080:8080"
     depends_on:
       - sqlserver
       - mongodb
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=SharedExperincesDB;User Id=sa;Password=Your_password123;
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=SharedExperincesDB2;User Id=sa;Password=Zerefez7253!;TrustServerCertificate=True
       - MongoDbSettings__ConnectionString=mongodb://mongodb:27017
       - Serilog__WriteTo__0__Name=MongoDB 
       - Serilog__WriteTo__0__Args__databaseUrl=mongodb://mongodb:27017/LoggingDb
@@ -23,6 +24,7 @@ services:
       - Serilog__WriteTo__0__Args__cappedMaxDocuments=10000
       - JWT__Issuer=SecureApi
       - JWT__Audience=SecureApi
+      - JWT__Key=JWTAuthenticationSecuredSecretKey12345678
     networks:
       - shared-experiences-network
     volumes:
@@ -30,10 +32,10 @@ services:
       
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: shared-experiences-sqlserver
+    container_name: shared-experiences-sqlserver2
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=Cefemivo+f113
+      - SA_PASSWORD=Zerefez7253!
       - MSSQL_PID=Express
     ports:
       - "1433:1433"
@@ -42,7 +44,7 @@ services:
     networks:
       - shared-experiences-network
     healthcheck:
-      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Cefemivo+f113", "-Q", "SELECT 1"]
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Zerefez7253!", "-Q", "SELECT 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -50,7 +52,7 @@ services:
     
   mongodb:
     image: mongo:latest
-    container_name: shared-experiences-mongodb
+    container_name: shared-experiences-mongodb2
     ports:
       - "27017:27017"
     volumes:
